@@ -1,0 +1,55 @@
+# Minimal example for Stable Diffusion 1.5-style training.
+model:
+  pretrained_model_name_or_path: "runwayml/stable-diffusion-v1-5"
+  architecture: sd15
+
+dataset:
+  dataset_path: "./examples/dataset"
+  trigger_word: "sks_person"
+  default_caption: null
+
+preprocess:
+  resolution: 512
+  center_crop: true
+  horizontal_flip: true
+
+training:
+  output_dir: "./outputs"
+  run_name: "example_sd15"
+  seed: 42
+  train_batch_size: 1
+  gradient_accumulation_steps: 4
+  max_train_steps: 500
+  mixed_precision: fp16
+  gradient_checkpointing: true
+  checkpointing_steps: 100
+
+lora:
+  enabled: true
+  rank: 8
+  alpha: 8
+  dropout: 0.0
+  train_text_encoder: false
+
+quantization:
+  enabled: false
+
+optimizer:
+  name: adamw
+  learning_rate: 1.0e-4
+
+lr_scheduler:
+  name: cosine
+  warmup_steps: 50
+
+validation:
+  enabled: true
+  every_n_steps: 100
+  prompts:
+    - "a photo of sks_person"
+
+logging:
+  backend: tensorboard
+
+hub:
+  push_to_hub: false

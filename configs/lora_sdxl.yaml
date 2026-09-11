@@ -1,0 +1,92 @@
+model:
+  pretrained_model_name_or_path: "stabilityai/stable-diffusion-xl-base-1.0"
+  architecture: sdxl
+  revision: null
+  prediction_type: auto
+
+dataset:
+  dataset_path: "./examples/dataset"
+  trigger_word: "sks_person"
+  caption_dropout: 0.05
+  cache_latents: false
+  cache_text_embeddings: false
+  num_workers: 2
+
+preprocess:
+  resolution: 1024
+  center_crop: true
+  random_crop: false
+  horizontal_flip: true
+  keep_aspect_ratio: true
+  interpolation: lanczos
+
+training:
+  output_dir: "./outputs"
+  run_name: "lora_sdxl"
+  seed: 42
+  resolution: 1024
+  train_batch_size: 1
+  gradient_accumulation_steps: 4
+  max_train_steps: 1000
+  mixed_precision: bf16
+  gradient_checkpointing: true
+  enable_tf32: true
+  enable_vae_slicing: true
+  checkpointing_steps: 250
+  checkpoints_total_limit: 3
+  resume_from_checkpoint: null
+
+lora:
+  enabled: true
+  rank: 16
+  alpha: 16
+  dropout: 0.05
+  bias: none
+  train_text_encoder: false
+  train_text_encoder_2: false
+  target_modules:
+    - to_q
+    - to_k
+    - to_v
+    - to_out.0
+
+quantization:
+  enabled: false
+  bits: 4
+  quant_type: nf4
+  double_quant: true
+  compute_dtype: bfloat16
+  allow_quantization_fallback: false
+
+optimizer:
+  name: adamw
+  learning_rate: 1.0e-4
+  betas: [0.9, 0.999]
+  weight_decay: 0.01
+  epsilon: 1.0e-8
+  max_grad_norm: 1.0
+
+lr_scheduler:
+  name: constant_with_warmup
+  warmup_steps: 100
+
+validation:
+  enabled: true
+  every_n_steps: 250
+  prompts:
+    - "portrait of sks_person in a professional studio"
+    - "sks_person walking through a forest"
+  num_images_per_prompt: 1
+  seed: 42
+  num_inference_steps: 30
+  guidance_scale: 7.5
+
+logging:
+  backend: tensorboard
+  log_every_n_steps: 10
+  project: image-lora-trainer
+
+hub:
+  repo_id: null
+  private: true
+  push_to_hub: false

@@ -1,0 +1,77 @@
+model:
+  pretrained_model_name_or_path: "stabilityai/stable-diffusion-xl-base-1.0"
+  architecture: sdxl
+  prediction_type: auto
+
+dataset:
+  dataset_path: "./examples/dataset"
+  trigger_word: "sks_person"
+  caption_dropout: 0.05
+  num_workers: 2
+
+preprocess:
+  resolution: 1024
+  center_crop: true
+  horizontal_flip: true
+  keep_aspect_ratio: true
+
+training:
+  output_dir: "./outputs"
+  run_name: "qlora_sdxl"
+  seed: 42
+  train_batch_size: 1
+  gradient_accumulation_steps: 4
+  max_train_steps: 1000
+  mixed_precision: bf16
+  gradient_checkpointing: true
+  enable_tf32: true
+  enable_vae_slicing: true
+  checkpointing_steps: 250
+  checkpoints_total_limit: 3
+
+lora:
+  enabled: true
+  rank: 16
+  alpha: 16
+  dropout: 0.05
+  bias: none
+  train_text_encoder: false
+  train_text_encoder_2: false
+
+quantization:
+  enabled: true
+  bits: 4
+  quant_type: nf4
+  double_quant: true
+  compute_dtype: bfloat16
+  quantize_denoiser: true
+  quantize_text_encoder: false
+  # Never silently degrade 4-bit requests. Set true only if you accept non-quantized LoRA.
+  allow_quantization_fallback: false
+
+optimizer:
+  name: adamw_8bit
+  learning_rate: 1.0e-4
+  betas: [0.9, 0.999]
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+
+lr_scheduler:
+  name: constant_with_warmup
+  warmup_steps: 100
+
+validation:
+  enabled: true
+  every_n_steps: 250
+  prompts:
+    - "portrait of sks_person in a professional studio"
+  num_images_per_prompt: 1
+  seed: 42
+
+logging:
+  backend: tensorboard
+  project: image-lora-trainer
+
+hub:
+  push_to_hub: false
+  private: true

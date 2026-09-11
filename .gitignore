@@ -1,0 +1,66 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+.cursor/
+
+# Environment / secrets
+.env
+.env.local
+*.pem
+secrets/
+
+# Training outputs & caches
+outputs/
+runs/
+wandb/
+lightning_logs/
+.cache/
+hf_cache/
+*.ckpt
+*.pt
+*.pth
+*.bin
+!examples/**/*.png
+!examples/**/*.jpg
+
+# Model weights (never commit)
+*.safetensors
+!tests/fixtures/**/*.safetensors
+
+# Logs / coverage
+*.log
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb

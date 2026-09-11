@@ -1,0 +1,119 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "image-lora-trainer"
+version = "0.1.0"
+description = "Professional LoRA / QLoRA fine-tuning toolkit for Hugging Face Diffusers text-to-image models"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "ML Engineering" }]
+keywords = [
+  "diffusion",
+  "lora",
+  "qlora",
+  "diffusers",
+  "stable-diffusion",
+  "sdxl",
+  "flux",
+  "fine-tuning",
+  "peft",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+  "torch>=2.2.0",
+  "torchvision>=0.17.0",
+  "transformers>=4.40.0",
+  "diffusers>=0.29.0",
+  "accelerate>=0.30.0",
+  "peft>=0.11.0",
+  "datasets>=2.19.0",
+  "huggingface_hub>=0.23.0",
+  "safetensors>=0.4.3",
+  "Pillow>=10.0.0",
+  "numpy>=1.26.0",
+  "pydantic>=2.7.0",
+  "pydantic-settings>=2.2.0",
+  "PyYAML>=6.0.1",
+  "tqdm>=4.66.0",
+  "tensorboard>=2.16.0",
+  "packaging>=24.0",
+]
+
+[project.optional-dependencies]
+qlora = ["bitsandbytes>=0.43.0"]
+xformers = ["xformers>=0.0.26"]
+wandb = ["wandb>=0.17.0"]
+dev = [
+  "pytest>=8.2.0",
+  "pytest-cov>=5.0.0",
+  "ruff>=0.4.0",
+  "mypy>=1.10.0",
+  "types-PyYAML>=6.0.12",
+  "types-Pillow>=10.0.0",
+]
+all = [
+  "image-lora-trainer[qlora,xformers,wandb,dev]",
+]
+
+[project.scripts]
+image-lora-trainer = "image_lora_trainer.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/example/image-lora-trainer"
+Documentation = "https://github.com/example/image-lora-trainer#readme"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/image_lora_trainer"]
+
+[tool.hatch.build.targets.wheel.sources]
+"src/image_lora_trainer" = "image_lora_trainer"
+
+[tool.hatch.build.targets.sdist]
+include = ["src/image_lora_trainer", "configs", "examples", "README.md", "pyproject.toml"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["E501", "B008"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["B011"]
+"scripts/**" = ["E402"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = false
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+packages = ["image_lora_trainer"]
+mypy_path = "src"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q --strict-markers"
+markers = [
+  "gpu: tests that require a CUDA GPU",
+  "slow: long-running tests",
+]
+
+[tool.coverage.run]
+source = ["image_lora_trainer"]
+branch = true
