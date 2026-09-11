@@ -1,8 +1,8 @@
 # Image LoRA Trainer
 
-**Professional LoRA / QLoRA-style fine-tuning for Hugging Face Diffusers text-to-image models.**
+**My LoRA / QLoRA-style fine-tuning toolkit for Hugging Face Diffusers text-to-image models.**
 
-Train personalized concepts — characters, products, styles, clothing, environments — on Stable Diffusion 1.5/2.1, SDXL, and FLUX-family checkpoints using parameter-efficient adapters. Switch between LoRA and QLoRA-style training through configuration alone. Built for reproducibility, GPU efficiency, and portfolio-quality ML engineering.
+I built this project to fine-tune pretrained image-generation models (Stable Diffusion 1.5/2.1, SDXL, and FLUX-family checkpoints where the license allows) on custom image–caption datasets. It supports personal concepts such as characters, products, styles, clothing, and environments using parameter-efficient adapters, with the ability to switch between LoRA and QLoRA-style training through configuration alone.
 
 ```bash
 # Quick start (after install)
@@ -48,9 +48,9 @@ python scripts/inference.py \
 
 ## 1. What this project does
 
-`image-lora-trainer` is a modular Python package for fine-tuning pretrained **text-to-image diffusion models** from the Hugging Face Hub (or local Diffusers folders).
+`image-lora-trainer` is my modular Python package for fine-tuning pretrained **text-to-image diffusion models** from the Hugging Face Hub (or local Diffusers folders).
 
-### Goals
+### Design goals
 
 | Goal | How it is achieved |
 |---|---|
@@ -58,12 +58,12 @@ python scripts/inference.py \
 | Memory-efficient training | Optional **QLoRA-style** 4/8-bit base quantization + gradient checkpointing |
 | Architecture flexibility | Model factory + capability detection (SD / SDXL / FLUX) |
 | Reproducibility | Seeded RNGs, saved configs, environment snapshots, training summaries |
-| Production hygiene | Typed YAML configs, structured logging, secret redaction, tests |
+| Clean engineering practices | Typed YAML configs, structured logging, secret redaction, tests |
 | Easy switching | LoRA ↔ QLoRA via `quantization.enabled` — same trainer code |
 
-### What you get after training
+### Training outputs
 
-Small adapter files (typically tens of MB), **not** a full duplicate of the base model:
+Training produces small adapter files (typically tens of MB), **not** a full duplicate of the base model:
 
 ```text
 outputs/my_run/final/denoiser/
@@ -124,7 +124,7 @@ If `target_modules` is omitted, the trainer selects sensible defaults for the de
 2. Keep **LoRA adapters in higher precision** (bf16 / fp16)
 3. Train only the adapters
 
-This repository supports a **QLoRA-style** mode for Diffusers denoisers using:
+I implemented a **QLoRA-style** mode for Diffusers denoisers using:
 
 - `bitsandbytes` quantization configs
 - Hugging Face `transformers` / `diffusers` `quantization_config`
@@ -157,7 +157,7 @@ accelerate launch scripts/train.py --config configs/qlora_sdxl.yaml
 
 ## 4. QLoRA limitations for diffusion models
 
-> **Correctness over marketing.** This project will not pretend that LLM QLoRA maps 1:1 onto UNets and DiT/FLUX transformers.
+> **Correctness over marketing.** I do not claim that LLM QLoRA maps 1:1 onto UNets and DiT/FLUX transformers.
 
 | Topic | Behavior here |
 |---|---|
@@ -166,7 +166,7 @@ accelerate launch scripts/train.py --config configs/qlora_sdxl.yaml
 | Text encoders | Full/mixed precision by default; quantization is opt-in and experimental |
 | Trainable parameters | LoRA adapters remain floating-point |
 | Silent fallback | **Never.** If 4-bit is requested but unsupported/unavailable, training fails unless you set `allow_quantization_fallback: true` |
-| Naming | We call this **QLoRA-style PEFT**, not “identical to LLM QLoRA” |
+| Naming | I call this **QLoRA-style PEFT**, not “identical to LLM QLoRA” |
 
 If true 4-bit training is unavailable, the closest valid memory-efficient mode is usually:
 
@@ -591,7 +591,7 @@ image-lora-trainer merge-lora \
 
 ```yaml
 hub:
-  repo_id: your-username/my-sdxl-lora
+  repo_id: <your-hf-username>/my-sdxl-lora
   private: true
   push_to_hub: true
 ```
@@ -885,16 +885,16 @@ python -c "from image_lora_trainer.utils.device import collect_device_info; prin
 
 ## 23. Model licensing & responsibility
 
-This software does **not** grant rights to any upstream model or dataset.
+This project does **not** grant rights to any upstream model or dataset.
 
-**You** must verify:
+Anyone using it (including me when sharing results) must verify:
 
 - base model license and fine-tuning / redistribution terms
 - dataset ownership, consent, and privacy constraints
 - commercial-use restrictions
-- generated-content policies for your jurisdiction and use case
+- generated-content policies for the intended use case
 
-Defaults save **LoRA adapters only**. Base weights are not automatically redistributed.
+By default, training saves **LoRA adapters only**. Base weights are not automatically redistributed.
 
 Gated models (including some FLUX checkpoints) may require accepting terms on Hugging Face before download.
 
@@ -948,4 +948,10 @@ pytest
 mypy src/image_lora_trainer
 ```
 
-If you are building a portfolio demo: start with `configs/example.yaml` or `configs/lora_sdxl.yaml`, a clean 15-image concept dataset, and document your trigger word, step count, and sample grid in the run’s `validation/` folder.
+Recommended first run: start with `configs/example.yaml` or `configs/lora_sdxl.yaml`, a clean 15-image concept dataset, and keep the trigger word, step count, and sample grid under the run’s `validation/` folder.
+
+---
+
+## Acknowledgement
+
+This README was written with the help of an LLM.
