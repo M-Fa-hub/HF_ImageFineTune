@@ -954,4 +954,4 @@ Recommended first run: start with `configs/example.yaml` or `configs/lora_sdxl.y
 
 ## Acknowledgement
 
-This README was written with the help of an LLM.
+This Project was written with the help of an LLM.
